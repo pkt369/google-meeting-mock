@@ -1,73 +1,103 @@
-# React + TypeScript + Vite
+# AI Meeting - Google Meet Mock
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+WebRTC를 이용한 구글 밋 스타일의 화상 회의 mock 프로젝트입니다.
 
-Currently, two official plugins are available:
+## 프로젝트 구조
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
-
-## React Compiler
-
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```
+ai-meeting-frontend-for-posting/
+├── frontend/          # React + TypeScript + Vite
+│   ├── src/
+│   ├── public/
+│   └── package.json
+├── backend/           # NestJS + Socket.io (시그널링 서버)
+│   ├── src/
+│   │   ├── main.ts
+│   │   ├── app.module.ts
+│   │   └── meeting/
+│   │       ├── meeting.gateway.ts
+│   │       └── meeting.module.ts
+│   └── package.json
+└── package.json       # 모노레포 스크립트
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## 주요 기능
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+- ✅ 비디오/오디오 통화 (WebRTC)
+- ✅ 참가자 관리
+- ✅ 4-6명 소규모 그룹 미팅 지원
+- ✅ 구글 밋 스타일 UI
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+## 기술 스택
+
+### Frontend
+- React 19
+- TypeScript
+- Vite
+- Socket.io Client
+- WebRTC API
+
+### Backend
+- NestJS 10
+- WebSocket Gateway
+- Socket.io
+- TypeScript
+
+## 시작하기
+
+### 1. 의존성 설치
+
+```bash
+npm run install:all
 ```
+
+### 2. 개발 서버 실행
+
+#### 전체 실행 (Frontend + Backend)
+```bash
+npm run dev
+```
+
+#### 개별 실행
+```bash
+# Backend 시그널링 서버 (포트 3001)
+npm run dev:backend
+
+# Frontend (포트 5173)
+npm run dev:frontend
+```
+
+### 3. 빌드
+
+```bash
+npm run build
+```
+
+## 포트 설정
+
+- **Frontend**: `http://localhost:5173`
+- **Backend (시그널링 서버)**: `http://localhost:3001`
+
+## WebRTC 시그널링
+
+WebRTC 연결을 위한 시그널링 서버가 NestJS WebSocket Gateway로 `backend/src/meeting/meeting.gateway.ts`에 구현되어 있습니다.
+
+### 주요 이벤트:
+- `join-room`: 회의실 입장
+- `offer`: WebRTC offer 전달
+- `answer`: WebRTC answer 전달
+- `ice-candidate`: ICE candidate 전달
+- `user-joined`: 새 참가자 입장 알림
+- `user-left`: 참가자 퇴장 알림
+
+## 다음 단계
+
+프론트엔드 구현:
+1. 홈 페이지 (회의실 코드 입력/생성)
+2. 미팅 페이지 (비디오 그리드, 컨트롤)
+3. WebRTC 연결 로직
+4. 참가자 관리 UI
+
+---
+
+포스팅을 위한 교육용 프로젝트입니다.
