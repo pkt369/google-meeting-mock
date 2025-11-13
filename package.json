@@ -1,5 +1,5 @@
 {
-  "name": "ai-meeting-monorepo",
+  "name": "google-meeting-mock",
   "version": "1.0.0",
   "description": "Google Meet mock project with WebRTC",
   "private": true,

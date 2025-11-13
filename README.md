@@ -1,11 +1,11 @@
-# AI Meeting - Google Meet Mock
+# Meeting - Google Meet Mock
 
 WebRTC를 이용한 구글 밋 스타일의 화상 회의 mock 프로젝트입니다.
 
 ## 프로젝트 구조
 
 ```
-ai-meeting-frontend-for-posting/
+google-meeting-mock/
 ├── frontend/          # React + TypeScript + Vite
 │   ├── src/
 │   ├── public/
