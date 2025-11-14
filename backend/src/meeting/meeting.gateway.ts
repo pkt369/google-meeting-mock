@@ -8,7 +8,8 @@ import {
   ConnectedSocket,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
-import { Logger } from '@nestjs/common';
+import { Logger, Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 
 interface RoomParticipant {
   socketId: string;
@@ -41,12 +42,15 @@ interface IceCandidateDto {
     credentials: true,
   },
 })
+@Injectable()
 export class MeetingGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer()
   server: Server;
 
   private readonly logger = new Logger(MeetingGateway.name);
   private rooms: Map<string, RoomParticipant[]> = new Map();
+
+  constructor(private configService: ConfigService) {}
 
   handleConnection(client: Socket) {
     this.logger.log(`User connected: ${client.id}`);
@@ -76,6 +80,25 @@ export class MeetingGateway implements OnGatewayConnection, OnGatewayDisconnect 
         }
       }
     });
+  }
+
+  @SubscribeMessage('get-ice-servers')
+  handleGetIceServers(@ConnectedSocket() client: Socket) {
+    this.logger.log(`Client ${client.id} requesting ICE servers`);
+
+    const stunServers = this.configService.get<string[]>('iceServers.stun');
+    const turnServer = this.configService.get<any>('iceServers.turn');
+
+    const iceServers: RTCIceServer[] = [
+      ...stunServers.map((url) => ({ urls: url })),
+    ];
+
+    // TURN 서버가 설정되어 있으면 추가
+    if (turnServer) {
+      iceServers.push(turnServer);
+    }
+
+    return { iceServers };
   }
 
   @SubscribeMessage('join-room')
